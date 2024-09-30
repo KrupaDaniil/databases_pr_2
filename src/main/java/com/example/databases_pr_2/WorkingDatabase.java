@@ -136,16 +136,16 @@ public class WorkingDatabase {
         List<OrderView> orderList = new ArrayList<>();
 
         String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
-                "inner join Products on Orders.ProductId = Products.Id" +
-                "inner join Sellers on Orders.SellerId = Sellers.Id" +
-                "inner join Buyers on Orders.BuyersId = Buyers.Id";
+                " inner join Products on Orders.ProductId = Products.Id" +
+                " inner join Sellers on Orders.SellerId = Sellers.Id" +
+                " inner join Buyers on Orders.BuyersId = Buyers.Id";
 
         try(Connection cn = ds.getConnection()) {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(orders);
             while (rs.next()) {
-                orderList.add(new OrderView(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getInt(5), rs.getDate(6)));
+                orderList.add(new OrderView(rs.getString(1), rs.getString(2),
+                        rs.getString(3), rs.getInt(4), rs.getDate(5)));
             }
 
         } catch (SQLException ex) {
@@ -158,9 +158,9 @@ public class WorkingDatabase {
     public List<OrderView> getOrdersByDate(Date date) {
         List<OrderView> orderList = new ArrayList<>();
         String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
-                "inner join Products on Orders.ProductId = Products.Id" +
-                "inner join Sellers on Orders.SellerId = Sellers.Id" +
-                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate = ?";
+                " inner join Products on Orders.ProductId = Products.Id" +
+                " inner join Sellers on Orders.SellerId = Sellers.Id" +
+                " inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate = ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(orders);
@@ -177,9 +177,9 @@ public class WorkingDatabase {
     public List<OrderView> getOrdersByDateInterval(Date p_start, Date p_end) {
         List<OrderView> orderList = new ArrayList<>();
         String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
-                "inner join Products on Orders.ProductId = Products.Id" +
-                "inner join Sellers on Orders.SellerId = Sellers.Id" +
-                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate >= ? && Orders.SaleDate <= ?";
+                " inner join Products on Orders.ProductId = Products.Id" +
+                " inner join Sellers on Orders.SellerId = Sellers.Id" +
+                " inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate >= ? and Orders.SaleDate <= ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(orders);
@@ -197,9 +197,9 @@ public class WorkingDatabase {
     public List<OrderView> getOrdersBySeller(int sellerId) {
         List<OrderView> orderList = new ArrayList<>();
         String command = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
-                "inner join Products on Orders.ProductId = Products.Id" +
-                "inner join Sellers on Orders.SellerId = Sellers.Id" +
-                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SellerId = ?";
+                " inner join Products on Orders.ProductId = Products.Id" +
+                " inner join Sellers on Orders.SellerId = Sellers.Id" +
+                " inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SellerId = ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(command);
@@ -216,9 +216,9 @@ public class WorkingDatabase {
     public List<OrderView> getOrdersByBuyer(int buyerId) {
         List<OrderView> orderList = new ArrayList<>();
         String command = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
-                "inner join Products on Orders.ProductId = Products.Id" +
-                "inner join Sellers on Orders.SellerId = Sellers.Id" +
-                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.BuyersId = ?";
+                " inner join Products on Orders.ProductId = Products.Id" +
+                " inner join Sellers on Orders.SellerId = Sellers.Id" +
+                " inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.BuyersId = ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(command);
@@ -309,8 +309,8 @@ public class WorkingDatabase {
 
         while (rs.next()) {
             while (rs.next()) {
-                list.add(new OrderView(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getInt(5), rs.getDate(6)));
+                list.add(new OrderView(rs.getString(1), rs.getString(2),
+                        rs.getString(3), rs.getInt(4), rs.getDate(5)));
             }
         }
     }

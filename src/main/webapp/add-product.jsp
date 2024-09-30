@@ -32,7 +32,8 @@
                     <div class="row">
                         <div class="col">
                             <div class="d-flex align-items-center justify-content-center">
-                                <button type="submit" class="btn btn-outline-success px-4">Add</button>
+                                <a href="<%=request.getContextPath()%>" class="btn btn-sm btn-outline-warning px-4 me-3">Back</a>
+                                <button type="submit" class="btn btn-sm btn-outline-success px-4">Add</button>
                             </div>
                         </div>
                     </div>

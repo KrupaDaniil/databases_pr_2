@@ -31,10 +31,11 @@
 </head>
 <body>
 <div class="container">
-    <div class="card p-3 w-100">
+    <div class="card p-3 w-100 my-3">
 
         <div class="d-flex align-items-center justify-content-end px-4 mb-3">
-            <a href="add-product.jsp" class="btn btn-sm btn-outline-success px-4">Add product</a>
+            <a href="add-product.jsp" class="btn btn-sm btn-outline-success px-3 me-3">Add product</a>
+            <a href="order-panel.jsp" class="btn btn-sm btn-outline-success px-3">Order panel</a>
         </div>
 
         <table class="table">
