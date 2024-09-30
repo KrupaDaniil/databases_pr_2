@@ -15,6 +15,8 @@
     List<Product> products = db.getAllProducts();
     List<Seller> sellers = db.getAllSellers();
     List<Buyer> buyers = db.getAllBuyers();
+    int qt = new Random().nextInt(10);
+    int randomIndex = new Random().nextInt(buyers.size() - 1);
 %>
 <!doctype html>
 <html lang="en">
@@ -65,8 +67,9 @@
                             <input type="hidden" name="productId" value="<%=product.getId()%>">
                             <input type="hidden" name="sellerId" value="<%=product.getSellerId()%>">
                             <input type="hidden" name="buyerId"
-                                   value="<%=buyers.stream().map(Buyer::getId).filter(r -> r == (new Random().nextInt(buyers.size() - 1))).findFirst().orElse(-1)%>">
-                            <input type="hidden" name="quantity" value="<%=new Random().nextInt(10)%>">
+                                   value="<%=buyers.stream().map(Buyer::getId)
+                                   .filter(r -> r == (randomIndex == 0 ? 1 : randomIndex)).findFirst().orElse(-1)%>">
+                            <input type="hidden" name="quantity" value="<%=qt == 0 ? 1 : qt%>">
                             <input type="hidden" name="curDate" value="<%=LocalDate.now()%>">
                             <input type="submit" class="btn btn-sm btn-outline-primary me-2 my-2 px-3" onclick="window.location.reload()" value="Buy">
                         </form>

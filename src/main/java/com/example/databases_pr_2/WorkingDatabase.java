@@ -1,10 +1,7 @@
 package com.example.databases_pr_2;
 
 
-import com.example.databases_pr_2.Models.Buyer;
-import com.example.databases_pr_2.Models.Order;
-import com.example.databases_pr_2.Models.Product;
-import com.example.databases_pr_2.Models.Seller;
+import com.example.databases_pr_2.Models.*;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
@@ -135,16 +132,20 @@ public class WorkingDatabase {
         }
     }
 
-    public List<Order> getAllOrders() {
-        List<Order> orderList = new ArrayList<>();
-        String orders = "select * from Orders";
+    public List<OrderView> getAllOrders() {
+        List<OrderView> orderList = new ArrayList<>();
+
+        String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
+                "inner join Products on Orders.ProductId = Products.Id" +
+                "inner join Sellers on Orders.SellerId = Sellers.Id" +
+                "inner join Buyers on Orders.BuyersId = Buyers.Id";
 
         try(Connection cn = ds.getConnection()) {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(orders);
             while (rs.next()) {
-                orderList.add(new Order(rs.getInt(1), rs.getInt(2), rs.getInt(3),
-                        rs.getInt(4), rs.getInt(5), rs.getDate(6)));
+                orderList.add(new OrderView(rs.getInt(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), rs.getInt(5), rs.getDate(6)));
             }
 
         } catch (SQLException ex) {
@@ -154,18 +155,17 @@ public class WorkingDatabase {
         return orderList;
     }
 
-    public List<Order> getOrdersByDate(Date date) {
-        List<Order> orderList = new ArrayList<>();
-        String orders = "select * from Orders where SaleDate = ?";
+    public List<OrderView> getOrdersByDate(Date date) {
+        List<OrderView> orderList = new ArrayList<>();
+        String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
+                "inner join Products on Orders.ProductId = Products.Id" +
+                "inner join Sellers on Orders.SellerId = Sellers.Id" +
+                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate = ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(orders);
             ps.setDate(1, date);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                orderList.add(new Order(rs.getInt(1), rs.getInt(2), rs.getInt(3),
-                        rs.getInt(4), rs.getInt(5), rs.getDate(6)));
-            }
+            addData(orderList, ps);
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -174,19 +174,56 @@ public class WorkingDatabase {
         return orderList;
     }
 
-    public List<Order> getOrdersByDate(Date date1, Date date2) {
-        List<Order> orderList = new ArrayList<>();
-        String orders = "select * from Orders where SaleDate >= ? && SaleDate <= ?";
+    public List<OrderView> getOrdersByDateInterval(Date p_start, Date p_end) {
+        List<OrderView> orderList = new ArrayList<>();
+        String orders = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
+                "inner join Products on Orders.ProductId = Products.Id" +
+                "inner join Sellers on Orders.SellerId = Sellers.Id" +
+                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SaleDate >= ? && Orders.SaleDate <= ?";
 
         try(Connection cn = ds.getConnection()) {
             PreparedStatement ps = cn.prepareStatement(orders);
-            ps.setDate(1, date1);
-            ps.setDate(2, date2);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                orderList.add(new Order(rs.getInt(1), rs.getInt(2), rs.getInt(3),
-                        rs.getInt(4), rs.getInt(5), rs.getDate(6)));
-            }
+            ps.setDate(1, p_start);
+            ps.setDate(2, p_end);
+            addData(orderList, ps);
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return orderList;
+    }
+
+    public List<OrderView> getOrdersBySeller(int sellerId) {
+        List<OrderView> orderList = new ArrayList<>();
+        String command = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
+                "inner join Products on Orders.ProductId = Products.Id" +
+                "inner join Sellers on Orders.SellerId = Sellers.Id" +
+                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.SellerId = ?";
+
+        try(Connection cn = ds.getConnection()) {
+            PreparedStatement ps = cn.prepareStatement(command);
+            ps.setInt(1, sellerId);
+            addData(orderList, ps);
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return orderList;
+    }
+
+    public List<OrderView> getOrdersByBuyer(int buyerId) {
+        List<OrderView> orderList = new ArrayList<>();
+        String command = "select Products.ProductName, Sellers.SellerName, Buyers.BuyerName, Quantity, SaleDate from Orders" +
+                "inner join Products on Orders.ProductId = Products.Id" +
+                "inner join Sellers on Orders.SellerId = Sellers.Id" +
+                "inner join Buyers on Orders.BuyersId = Buyers.Id"+ " where Orders.BuyersId = ?";
+
+        try(Connection cn = ds.getConnection()) {
+            PreparedStatement ps = cn.prepareStatement(command);
+            ps.setInt(1, buyerId);
+            addData(orderList, ps);
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -264,6 +301,17 @@ public class WorkingDatabase {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void addData(List<OrderView> list, PreparedStatement ps) throws SQLException {
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            while (rs.next()) {
+                list.add(new OrderView(rs.getInt(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), rs.getInt(5), rs.getDate(6)));
+            }
         }
     }
 }
